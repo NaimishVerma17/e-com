@@ -1,6 +1,7 @@
 import express from "express";
 import { corsMiddleware } from './middlewares/cors.middleware';
 import ItemRoutes from "./routes/item.route";
+import UserRoutes from "./routes/user.route";
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(express.json({ limit: "10mb" }));
 
 // ROUTES
 app.use("/items", ItemRoutes);
+app.use("/users", UserRoutes);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", message: "E-commerce API is running" });
