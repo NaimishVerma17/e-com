@@ -1,8 +1,10 @@
 import express from "express";
+import { corsMiddleware } from './middlewares/cors.middleware';
 
 const app = express();
 
 // MIDDLEWARE
+app.use(corsMiddleware);
 app.use(express.json({ limit: "10mb" }));
 
 // ROUTES
