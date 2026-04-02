@@ -13,4 +13,9 @@ router.post(
   asyncMiddleware(CartController.addToCart)
 );
 
+router.get(
+  "/",
+  asyncMiddleware(CartController.getCart)
+);
+
 export default router;

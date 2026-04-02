@@ -15,3 +15,20 @@ export const addToCart = async (
     cart,
   });
 };
+
+export const getCart = async (req: Request, res: Response) => {
+  const userId = req.params.userId as string;
+  const cart = await CartService.getCartByUserId(userId);
+
+  if (!cart) {
+    res.status(STATUS_CODES.NOT_FOUND).json({
+      message: "Cart not found"
+    });
+    return;
+  }
+
+  res.status(STATUS_CODES.OK).json({
+    message: "Cart retrieved successfully",
+    cart,
+  });
+};

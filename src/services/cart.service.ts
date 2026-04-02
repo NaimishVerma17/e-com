@@ -57,6 +57,17 @@ export const addItemToCart = async (
   return calculateCartTotal(updatedCart);
 };
 
+export const getCartByUserId = async (
+  userId: string
+): Promise<ICartWithItems | null> => {
+  const cart = CartRepository.findCartByUserId(userId);
+  if (!cart) {
+    return null;
+  }
+
+  return calculateCartTotal(cart);
+};
+
 const calculateCartTotal = (cart: {
   id: string;
   userId: string;
