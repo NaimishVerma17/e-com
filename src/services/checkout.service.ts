@@ -1,21 +1,15 @@
-import { appConfig } from "../configs/app.config";
 import { STATUS_CODES } from "../constants/status";
 import * as CartRepository from "../repositories/cart.repository";
 import * as DiscountRepository from "../repositories/discount.repository";
 import * as ItemRepository from "../repositories/item.repository";
 import * as OrderRepository from "../repositories/order.repository";
-import { IDiscountCode } from "../types/discount.type";
+import { IOrder } from "../types/order.type";
 import { AppError } from "../utils/appError";
 import { calculateCartTotal } from "../utils/cart.util";
-import {
-  generateDiscountCode,
-  generateDiscountPercentage,
-} from "../utils/discountCodeGenerator";
-import { IOrder } from '../types/order.type';
+import { getOrdinalSuffix } from '../utils/common.util';
 
 interface CheckoutResult {
   order: IOrder;
-  generatedDiscountCode?: IDiscountCode;
 }
 
 export const checkout = async (
@@ -41,17 +35,29 @@ export const checkout = async (
       throw new AppError(STATUS_CODES.NOT_FOUND, "Invalid discount code");
     }
 
-    if (discount.isUsed) {
+    // Check if user has already used this coupon
+    if (DiscountRepository.hasUserUsedCoupon(userId, discountCode)) {
       throw new AppError(
         STATUS_CODES.BAD_REQUEST,
-        "Discount code has already been used"
+        "You have already used this discount code"
+      );
+    }
+
+    // Get user's current order count (including this order)
+    const userOrderCount = OrderRepository.getUserOrderCount(userId) + 1;
+
+    // Check if user is on their nth order
+    if (userOrderCount !== discount.nthOrder) {
+      throw new AppError(
+        STATUS_CODES.BAD_REQUEST,
+        `This discount code is only valid for your ${discount.nthOrder}${getOrdinalSuffix(discount.nthOrder)} order. This is your ${userOrderCount}${getOrdinalSuffix(userOrderCount)} order.`
       );
     }
 
     discountAmount = (subtotal * discount.discountPercentage) / 100;
 
-    // Mark discount as used
-    DiscountRepository.markDiscountAsUsed(discountCode, userId);
+    // Mark coupon as used by this user
+    DiscountRepository.markCouponAsUsedByUser(userId, discountCode);
   }
 
   const totalAmount = subtotal - discountAmount;
@@ -90,24 +96,8 @@ export const checkout = async (
   // Clear cart
   CartRepository.clearCart(cart.id);
 
-  // Check if this is the nth order and generate discount code
-  const totalOrders = OrderRepository.getTotalOrderCount();
-  const nthOrder = appConfig.nthOrderForDiscount;
-
-  let generatedDiscountCode: IDiscountCode | undefined;
-
-  if (totalOrders % nthOrder === 0) {
-    const newCode = generateDiscountCode();
-    const newPercentage = generateDiscountPercentage(10, 25);
-
-    generatedDiscountCode = DiscountRepository.createDiscountCode(
-      newCode,
-      newPercentage
-    );
-  }
-
   return {
     order,
-    generatedDiscountCode,
   };
 };
+

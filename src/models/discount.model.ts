@@ -1,4 +1,4 @@
-import { IDiscountCode } from "../types/discount.type";
+import { IDiscountCode, IUserCouponUsage } from "../types/discount.type";
 
 class DiscountCodeStore {
   private discountCodes: Map<string, IDiscountCode> = new Map();
@@ -16,16 +16,26 @@ class DiscountCodeStore {
     return Array.from(this.discountCodes.values());
   }
 
-  markAsUsed(code: string, userId: string): boolean {
-    const discountCode = this.discountCodes.get(code);
-    if (!discountCode || discountCode.isUsed) {
-      return false;
-    }
-    discountCode.isUsed = true;
-    discountCode.usedBy = userId;
-    discountCode.usedAt = new Date();
-    return true;
+}
+
+class UserCouponUsageStore {
+  private usages: IUserCouponUsage[] = [];
+
+  create(usage: IUserCouponUsage): IUserCouponUsage {
+    this.usages.push(usage);
+    return usage;
+  }
+
+  hasUserUsedCoupon(userId: string, discountCode: string): boolean {
+    return this.usages.some(
+      (usage) => usage.userId === userId && usage.discountCode === discountCode
+    );
+  }
+
+  findAll(): IUserCouponUsage[] {
+    return [...this.usages];
   }
 }
 
 export const discountCodeStore = new DiscountCodeStore();
+export const userCouponUsageStore = new UserCouponUsageStore();

@@ -1,8 +1,12 @@
 export interface IDiscountCode {
   code: string;
   discountPercentage: number;
-  isUsed: boolean;
-  usedBy?: string;
-  usedAt?: Date;
+  nthOrder: number;
   readonly createdAt: Date;
+}
+
+export interface IUserCouponUsage {
+  userId: string;
+  discountCode: string;
+  usedAt: Date;
 }

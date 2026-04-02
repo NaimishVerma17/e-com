@@ -12,7 +12,11 @@ export const getStatistics = async (req: Request, res: Response) => {
 };
 
 export const generateDiscountCode = async (req: Request, res: Response) => {
-  const result = await AdminService.generateDiscountCodeManually();
+  const { nthOrder, discountPercentage } = req.body;
+  const result = await AdminService.generateDiscountCodeManually(
+    nthOrder,
+    discountPercentage
+  );
   res.status(STATUS_CODES.CREATED).json({
     message: result.message,
     discountCode: result.discountCode,

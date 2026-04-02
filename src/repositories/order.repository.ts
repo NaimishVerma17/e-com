@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 
 import { orderStore } from "../models/order.model";
 import { ICartItem } from "../types/cart.type";
-import { IOrder, IOrderStats } from '../types/order.type';
+import { IOrder, IOrderStats } from "../types/order.type";
 
 export const createOrder = (
   userId: string,
@@ -26,8 +26,17 @@ export const createOrder = (
   return orderStore.create(order);
 };
 
+export const findAllOrders = (): IOrder[] => {
+  return orderStore.findAll();
+};
+
 export const getTotalOrderCount = (): number => {
   return orderStore.getTotalCount();
+};
+
+export const getUserOrderCount = (userId: string): number => {
+  const orders = orderStore.findAll();
+  return orders.filter((order) => order.userId === userId).length;
 };
 
 export const getOrderStats = (): IOrderStats => {

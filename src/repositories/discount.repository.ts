@@ -1,14 +1,15 @@
-import { discountCodeStore } from "../models/discount.model";
-import { IDiscountCode } from "../types/discount.type";
+import { discountCodeStore, userCouponUsageStore } from "../models/discount.model";
+import { IDiscountCode, IUserCouponUsage } from "../types/discount.type";
 
 export const createDiscountCode = (
   code: string,
-  discountPercentage: number
+  discountPercentage: number,
+  nthOrder: number
 ): IDiscountCode => {
   const discountCode: IDiscountCode = {
     code,
     discountPercentage,
-    isUsed: false,
+    nthOrder,
     createdAt: new Date(),
   };
 
@@ -23,6 +24,21 @@ export const findAllDiscountCodes = (): IDiscountCode[] => {
   return discountCodeStore.findAll();
 };
 
-export const markDiscountAsUsed = (code: string, userId: string): boolean => {
-  return discountCodeStore.markAsUsed(code, userId);
+export const markCouponAsUsedByUser = (
+  userId: string,
+  discountCode: string
+): IUserCouponUsage => {
+  const usage: IUserCouponUsage = {
+    userId,
+    discountCode,
+    usedAt: new Date(),
+  };
+  return userCouponUsageStore.create(usage);
+};
+
+export const hasUserUsedCoupon = (
+  userId: string,
+  discountCode: string
+): boolean => {
+  return userCouponUsageStore.hasUserUsedCoupon(userId, discountCode);
 };
