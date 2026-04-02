@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 
 import { orderStore } from "../models/order.model";
 import { ICartItem } from "../types/cart.type";
-import { IOrder } from "../types/order.type";
+import { IOrder, IOrderStats } from '../types/order.type';
 
 export const createOrder = (
   userId: string,
@@ -28,4 +28,27 @@ export const createOrder = (
 
 export const getTotalOrderCount = (): number => {
   return orderStore.getTotalCount();
+};
+
+export const getOrderStats = (): IOrderStats => {
+  const orders = orderStore.findAll();
+
+  const totalOrders = orders.length;
+  const totalItemsPurchased = orders.reduce(
+    (sum, order) =>
+      sum + order.items.reduce((itemSum, item) => itemSum + item.quantity, 0),
+    0
+  );
+  const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const totalDiscountGiven = orders.reduce(
+    (sum, order) => sum + order.discountAmount,
+    0
+  );
+
+  return {
+    totalOrders,
+    totalItemsPurchased,
+    totalRevenue,
+    totalDiscountGiven,
+  };
 };
