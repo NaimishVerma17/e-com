@@ -46,3 +46,7 @@ export const addItemToCart = (
 
   return cartStore.update(cartId, cart.items);
 };
+
+export const clearCart = (cartId: string): boolean => {
+  return cartStore.delete(cartId);
+};

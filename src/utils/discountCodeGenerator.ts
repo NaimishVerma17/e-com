@@ -12,3 +12,13 @@ export const generateDiscountCode = (): string => {
 
   return code;
 };
+
+/**
+ * Generates a random discount percentage between min and max
+ */
+export const generateDiscountPercentage = (
+  min: number = 10,
+  max: number = 25
+): number => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};

@@ -25,3 +25,7 @@ export const createOrder = (
 
   return orderStore.create(order);
 };
+
+export const getTotalOrderCount = (): number => {
+  return orderStore.getTotalCount();
+};
