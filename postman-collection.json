@@ -1,0 +1,177 @@
+{
+  "info": {
+    "name": "E-Commerce Store API",
+    "description": "Collection of API endpoints for the E-Commerce Store",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Items",
+      "item": [
+        {
+          "name": "Get All Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["items"]
+            }
+          }
+        },
+        {
+          "name": "Get Item by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/items/item-1",
+              "host": ["{{baseUrl}}"],
+              "path": ["items", "item-1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Add Item to Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemId\": \"item-1\",\n  \"quantity\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/user-1/cart",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "user-1", "cart"]
+            }
+          }
+        },
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/user-1/cart",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "user-1", "cart"]
+            }
+          }
+        },
+        {
+          "name": "Checkout without Discount",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/user-1/checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "user-1", "checkout"]
+            }
+          }
+        },
+        {
+          "name": "Checkout with Discount Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"discountCode\": \"DISCOUNT-ABC123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/user-1/checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "user-1", "checkout"]
+            },
+            "description": "Checkout with a discount code. The code will be validated to ensure:\n1. The discount code exists\n2. The user hasn't already used this specific code\n3. The user is on their nth order (as specified in the coupon)\n\nExample: If a coupon is for the 5th order, the user must be placing their 5th order to use it."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Generate Discount Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nthOrder\": 5,\n  \"discountPercentage\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/discount-codes",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "discount-codes"]
+            },
+            "description": "Creates a discount coupon that users can apply on their nth order. Each user can use the coupon once on their respective nth order.\n\nExample: If nthOrder=5 and discountPercentage=10, every user can get 10% off on their 5th order using this coupon code."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
