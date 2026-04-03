@@ -13,6 +13,7 @@ export const getStatistics = async (req: Request, res: Response) => {
 
 export const generateDiscountCode = async (req: Request, res: Response) => {
   const { nthOrder, discountPercentage } = req.body;
+  console.log("init dcode");
   const result = await AdminService.generateDiscountCodeManually(
     nthOrder,
     discountPercentage

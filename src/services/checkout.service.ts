@@ -6,7 +6,7 @@ import * as OrderRepository from "../repositories/order.repository";
 import { IOrder } from "../types/order.type";
 import { AppError } from "../utils/appError";
 import { calculateCartTotal } from "../utils/cart.util";
-import { getOrdinalSuffix } from '../utils/common.util';
+import { getOrdinalSuffix } from "../utils/common.util";
 
 interface CheckoutResult {
   order: IOrder;
@@ -14,7 +14,7 @@ interface CheckoutResult {
 
 export const checkout = async (
   userId: string,
-  discountCode?: string
+  discountCode?: string,
 ): Promise<CheckoutResult> => {
   // Get user's cart
   const cart = CartRepository.findCartByUserId(userId);
@@ -39,7 +39,7 @@ export const checkout = async (
     if (DiscountRepository.hasUserUsedCoupon(userId, discountCode)) {
       throw new AppError(
         STATUS_CODES.BAD_REQUEST,
-        "You have already used this discount code"
+        "You have already used this discount code",
       );
     }
 
@@ -50,7 +50,7 @@ export const checkout = async (
     if (userOrderCount !== discount.nthOrder) {
       throw new AppError(
         STATUS_CODES.BAD_REQUEST,
-        `This discount code is only valid for your ${discount.nthOrder}${getOrdinalSuffix(discount.nthOrder)} order. This is your ${userOrderCount}${getOrdinalSuffix(userOrderCount)} order.`
+        `This discount code is only valid for your ${discount.nthOrder}${getOrdinalSuffix(discount.nthOrder)} order. This is your ${userOrderCount}${getOrdinalSuffix(userOrderCount)} order.`,
       );
     }
 
@@ -68,14 +68,14 @@ export const checkout = async (
     if (!item) {
       throw new AppError(
         STATUS_CODES.NOT_FOUND,
-        `Item ${cartItem.itemId} not found`
+        `Item ${cartItem.itemId} not found`,
       );
     }
 
     if (item.stock < cartItem.quantity) {
       throw new AppError(
         STATUS_CODES.BAD_REQUEST,
-        `Insufficient stock for item: ${item.name}`
+        `Insufficient stock for item: ${item.name}`,
       );
     }
 
@@ -90,7 +90,7 @@ export const checkout = async (
     subtotal,
     discountAmount,
     totalAmount,
-    discountCode
+    discountCode,
   );
 
   // Clear cart
@@ -100,4 +100,3 @@ export const checkout = async (
     order,
   };
 };
-

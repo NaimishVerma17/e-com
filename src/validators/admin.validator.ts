@@ -9,7 +9,3 @@ export const generateDiscountCodeSchema = z.object({
       .max(100, "Discount percentage cannot exceed 100"),
   }),
 });
-
-export type GenerateDiscountCodeInput = z.infer<
-  typeof generateDiscountCodeSchema
->["body"];
